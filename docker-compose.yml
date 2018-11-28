@@ -1,0 +1,33 @@
+web:
+  build: ./Docker/.
+  ports:
+    - "80:80"
+  links:
+    - db
+    - phpmyadmin
+  volumes:
+    - ./var/www/:/var/www/html
+    - "./Docker/php.ini:/usr/local/etc/php/php.ini"
+
+
+db:
+   image: mysql:5.6
+   command: --max_allowed_packet=100000M
+         --wait_timeout=2880000
+   volumes:
+         - db_data:/var/lib/mysql
+   environment:
+         - MYSQL_ROOT_PASSWORD=root
+         - MYSQL_ROOT_HOST=%
+
+
+phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        links:
+            - db:db
+        ports:
+            - 8000:80
+        environment:
+            MYSQL_USER: root
+            MYSQL_PASSWORD: root
+            MYSQL_ROOT_PASSWORD: root
